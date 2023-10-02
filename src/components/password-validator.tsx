@@ -21,7 +21,6 @@ type ValidationRegexPatterns = {
   [key in 'noConsecutiveLetters' | 'number' | 'specialCharacters' | 'uppercase']: ValidationPattern;
 } & { [key: string]: ValidationPattern };
 
-
 const validationRegexPatterns: ValidationRegexPatterns = {
   noConsecutiveLetters: {
     pattern: '^(?!.*?(.)\\1).+$',
@@ -49,7 +48,8 @@ const PasswordValidator: React.FC<Props> = ({ disabled, passwordReqs, className,
 
   const patternString = passwordReqs.map(req => validationRegexPatterns[req].pattern).join('');
   const validateAllRegex = new RegExp(`^${patternString}.*$`);
-  const valid = validateAllRegex.test(passwordValue)
+  const valid = validateAllRegex.test(passwordValue);
+  onChange && onChange(valid);
 
   const validationItem = (req: string): boolean => {
     const testPattern = new RegExp(`^${validationRegexPatterns[req].pattern}.*$`);
@@ -59,10 +59,6 @@ const PasswordValidator: React.FC<Props> = ({ disabled, passwordReqs, className,
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setPasswordValue(e.target.value);
   };
-
-  useEffect(() => {
-    if (onChange) onChange(valid);
-  }, [passwordValue, onChange, valid])
 
   return (
     <div className={cn('container flex flex-col items-center justify-center p-4', className)}>
